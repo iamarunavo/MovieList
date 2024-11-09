@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
-import './MovieDetails.css'; // Import the CSS file for styling
+import './MovieDetails.css'; 
 
 const MovieDetails = () => {
     const { id } = useParams();
@@ -8,7 +8,7 @@ const MovieDetails = () => {
     const [actors, setActors] = useState([]);
 
     useEffect(() => {
-        const apiKey = 'b3c383343eb4caebcd343c251b05b668'; // Replace with your actual TMDB API key
+        const apiKey = 'b3c383343eb4caebcd343c251b05b668'; 
 
         const fetchMovieDetails = async () => {
             try {
