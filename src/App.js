@@ -1,14 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './App.css';
-import { BrowserRouter as Router, Route, Routes } from 'react-router-dom'; // Import Routes instead of Switch
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom'; 
 import MovieList from './components/MovieList';
 import MovieListHeading from './components/MovieListHeading';
 import SearchBox from './components/SearchBox';
 import AddFavourites from './components/AddFavourites';
 import RemoveFavourites from './components/RemoveFavourites';
-import FilterBar from './components/FilterBar'; // Importing FilterBar component
-import MovieDetails from './components/MovieDetails'; // Importing MovieDetails component
+import FilterBar from './components/FilterBar'; 
+import MovieDetails from './components/MovieDetails'; 
 const apiKey = 'b3c383343eb4caebcd343c251b05b668';
 const App = () => {
     const [movies, setMovies] = useState([]);
@@ -17,10 +17,10 @@ const App = () => {
     const [filterByGenre, setFilterByGenre] = useState('');
     const [filterByYear, setFilterByYear] = useState('');
     const [sortOrder, setSortOrder] = useState('');
-    const [genres, setGenres] = useState([]); // Add this line
+    const [genres, setGenres] = useState([]); 
 
     const getMovieRequest = async (searchValue) => {
-      const apiKey = 'b3c383343eb4caebcd343c251b05b668'; // Replace with your actual API key
+      const apiKey = 'b3c383343eb4caebcd343c251b05b668'; 
       let url;
   
       if (searchValue) {
@@ -29,7 +29,7 @@ const App = () => {
           url = `https://api.themoviedb.org/3/discover/movie?api_key=${apiKey}`;
       }
   
-      // Add your error handling code here
+      
       try {
           const response = await fetch(url);
           if (!response.ok) {
@@ -50,14 +50,13 @@ const App = () => {
             const response = await fetch(`https://api.themoviedb.org/3/genre/movie/list?api_key=${apiKey}`);
             const data = await response.json();
             if (data.genres) {
-                setGenres(data.genres); // Set genres if data is available
+                setGenres(data.genres); 
             } else {
-                setGenres([]); // Ensure genres is an empty array if no data
+                setGenres([]); 
             }
         } catch (error) {
             console.error('Error fetching genres:', error);
-            setGenres([]); // Set to empty array on error
-        }
+            setGenres([]); 
     };
 
     fetchGenres();
@@ -84,40 +83,40 @@ const App = () => {
     };
 
     const removeFavouriteMovie = (movie) => {
-      // Filter out the movie by comparing unique identifiers (e.g., imdbID or id)
+      
       const newFavouriteList = favourites.filter(
-        (favourite) => favourite.id !== movie.id // Use 'id' as the unique identifier
+        (favourite) => favourite.id !== movie.id 
     );
   
-      // Update the state and local storage
+
       setFavourites(newFavouriteList);
       saveToLocalStorage(newFavouriteList);
   };
   
-    // Filter and sort logic
+
     const filteredMovies = movies
     .filter(movie => {
-        // Genre Filtering
+ 
         if (filterByGenre && movie.genre_ids) {
-            return movie.genre_ids.includes(parseInt(filterByGenre, 10)); // Match genre ID
+            return movie.genre_ids.includes(parseInt(filterByGenre, 10)); 
         }
-        return true; // No genre filter applied
+        return true; 
     })
     .filter(movie => {
-        // Year Filtering
+   
         if (filterByYear && movie.release_date) {
-            return movie.release_date.startsWith(filterByYear); // Check if the year matches
+            return movie.release_date.startsWith(filterByYear); 
         }
-        return true; // No year filter applied
+        return true; 
     })
     .sort((a, b) => {
         // Sorting by title
         if (sortOrder === 'asc') {
-            return a.title.localeCompare(b.title); // Ascending
+            return a.title.localeCompare(b.title);
         } else if (sortOrder === 'desc') {
-            return b.title.localeCompare(a.title); // Descending
+            return b.title.localeCompare(a.title); 
         }
-        return 0; // No sorting applied
+        return 0; 
     });
 
 
@@ -127,8 +126,8 @@ const App = () => {
     return (
         <Router>
             <div className='container-fluid movie-app'>
-                <Routes> {/* Use Routes instead of Switch */}
-                    {/* Main Route for Movie List */}
+                <Routes> {}
+                    {}
                     <Route
                         path='/'
                         element={
@@ -141,11 +140,11 @@ const App = () => {
                                  setFilterByGenre={setFilterByGenre}
                                  setFilterByYear={setFilterByYear}
                                  setSortOrder={setSortOrder}
-                                 genres={genres} // Ensure genres are passed correctly
+                                 genres={genres} 
                                 />
                                 <div className='row'>
                                     <MovieList
-                                        movies={filteredMovies} // Use filtered and sorted movies
+                                        movies={filteredMovies} 
                                         handleFavouritesClick={addFavouriteMovie}
                                         favouriteComponent={AddFavourites}
                                     />
@@ -165,7 +164,7 @@ const App = () => {
                         }
                     />
                     
-                    {/* Route for Movie Details */}
+                    {}
                     <Route path='/movie/:id' element={<MovieDetails />} />
                 </Routes>
             </div>
