@@ -1,5 +1,5 @@
 import React from 'react';
-import { Link } from 'react-router-dom'; // Import Link from react-router-dom
+import { Link } from 'react-router-dom'; 
 
 const MovieList = (props) => {
     const FavouriteComponent = props.favouriteComponent;
@@ -7,7 +7,7 @@ const MovieList = (props) => {
     return (
         <>
            {props.movies.map((movie, index) => (
-    movie.poster_path && ( // Only show movies with a valid poster
+    movie.poster_path && ( 
         <div className='image-container d-flex justify-content-start m-3' key={index}>
             <Link to={`/movie/${movie.id}`}>
                 <img
