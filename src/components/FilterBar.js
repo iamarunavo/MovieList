@@ -1,7 +1,7 @@
 import React from 'react';
 
 const FilterBar = ({ setFilterByGenre, setFilterByYear, setSortOrder, genres }) => {
-    // Generate years from 2000 to the current year
+    
     const currentYear = new Date().getFullYear();
     const years = Array.from({ length: currentYear - 2000 + 1 }, (_, index) => 2000 + index);
 
