@@ -28,9 +28,9 @@ body {
 	opacity: 1;
 }
 .poster-image {
-  width: 150px; /* Set your preferred width */
-  height: auto; /* Maintain aspect ratio */
-  object-fit: cover; /* Ensures consistent sizing */
+  width: 150px; 
+  height: auto; 
+  object-fit: cover;
 }
 
 .overlay {
@@ -47,8 +47,8 @@ body {
 }
 .movie-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); /* Adjust the minmax values */
-  gap: 16px; /* Controls space between cards */
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); 
+  gap: 16px; 
 }
 
 .image-container {
@@ -56,14 +56,14 @@ body {
   overflow: hidden;
   border-radius: 10px;
   transition: transform 0.3s ease-in-out;
-  max-width: 200px; /* Limit max width of each card */
+  max-width: 200px; 
   width: 100%;
 }
 
 .image-container img {
   width: 100%;
   height: auto;
-  max-height: 300px; /* Controls the maximum height of images */
+  max-height: 300px; 
   border-radius: 10px;
 }
 
