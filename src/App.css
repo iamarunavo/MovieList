@@ -1,0 +1,74 @@
+body {
+	background: #141414;
+	color: #ffffff;
+}
+
+.movie-app > .row {
+	overflow-x: auto;
+	flex-wrap: nowrap;
+}
+
+.image-container {
+	position: relative;
+	transition: transform 0.2s;
+
+}
+.movie-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 1rem;
+}
+
+.image-container:hover {
+	cursor: pointer;
+	transform: scale(1.1);
+}
+
+.image-container:hover .overlay {
+	opacity: 1;
+}
+.poster-image {
+  width: 150px; /* Set your preferred width */
+  height: auto; /* Maintain aspect ratio */
+  object-fit: cover; /* Ensures consistent sizing */
+}
+
+.overlay {
+	position: absolute;
+	background: rgba(0, 0, 0, 0.8);
+	width: 100%;
+	transition: 0.5s ease;
+	opacity: 0;
+	bottom: 0;
+	font-size: 20px;
+	padding: 20px;
+	text-align: center;
+
+}
+.movie-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); /* Adjust the minmax values */
+  gap: 16px; /* Controls space between cards */
+}
+
+.image-container {
+  position: relative;
+  overflow: hidden;
+  border-radius: 10px;
+  transition: transform 0.3s ease-in-out;
+  max-width: 200px; /* Limit max width of each card */
+  width: 100%;
+}
+
+.image-container img {
+  width: 100%;
+  height: auto;
+  max-height: 300px; /* Controls the maximum height of images */
+  border-radius: 10px;
+}
+
+.image-container:hover {
+  transform: scale(1.05);
+  cursor: pointer;
+}
+
