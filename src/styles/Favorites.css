@@ -1,0 +1,84 @@
+.favorites-page {
+    padding: 2rem;
+    max-width: 1400px;
+    margin: 0 auto;
+}
+
+.favorites-header {
+    margin-bottom: 2rem;
+    display: flex;
+    align-items: center;
+}
+
+.count-inline {
+    color: rgba(255, 255, 255, 0.7);
+    font-weight: 400;
+}
+
+.no-favorites-message {
+    text-align: center;
+    padding: 4rem 2rem;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 12px;
+    margin: 2rem 0;
+}
+
+.no-favorites-message p {
+    margin: 0;
+    color: #ffffff;
+    font-size: 1.2rem;
+}
+
+.no-favorites-message .suggestion {
+    margin-top: 1rem;
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 1rem;
+}
+
+.auth-required-container {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem;
+    background: linear-gradient(135deg, #1a1a1a 0%, #0d0d0d 100%);
+}
+
+.auth-required-content {
+    background: rgba(255, 255, 255, 0.05);
+    padding: 2.5rem;
+    border-radius: 16px;
+    text-align: center;
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+}
+
+.auth-required-content h2 {
+    color: #ffffff;
+    font-size: 1.75rem;
+    margin: 0 0 1rem;
+}
+
+.auth-required-content p {
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 1.1rem;
+    margin: 0;
+}
+
+@media (max-width: 768px) {
+    .favorites-page {
+        padding: 1.5rem;
+    }
+
+    .favorites-header {
+        flex-direction: row;
+        align-items: center;
+    }
+}
+
+@media (max-width: 480px) {
+    .favorites-page {
+        padding: 1rem;
+    }
+}
