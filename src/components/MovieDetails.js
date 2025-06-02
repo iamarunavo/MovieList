@@ -2,6 +2,28 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import './MovieDetails.css';
 
+// Import TMDB configuration from App.js
+const TMDB_CONFIG = {
+    baseUrl: 'https://api.themoviedb.org/3',
+    apiKey: process.env.REACT_APP_TMDB_API_KEY,
+    imageBase: 'https://image.tmdb.org/t/p'
+};
+
+// API request helper
+const fetchTMDB = async (endpoint, params = {}) => {
+    const url = new URL(`${TMDB_CONFIG.baseUrl}${endpoint}`);
+    url.searchParams.append('api_key', TMDB_CONFIG.apiKey);
+    Object.entries(params).forEach(([key, value]) => {
+        url.searchParams.append(key, value);
+    });
+
+    const response = await fetch(url);
+    if (!response.ok) {
+        throw new Error(`TMDB API error: ${response.status}`);
+    }
+    return response.json();
+};
+
 const MovieDetails = ({ favourites = [], handleAddFavourite, handleRemoveFavourite, user, processingMovies }) => {
     const { id } = useParams();
     const navigate = useNavigate();
@@ -14,24 +36,20 @@ const MovieDetails = ({ favourites = [], handleAddFavourite, handleRemoveFavouri
     const [providersError, setProvidersError] = useState(null);
 
     const isFavourite = movie && favourites.some(fav => fav.id === movie.id);
-    const apiKey = process.env.REACT_APP_TMDB_API_KEY;
 
     useEffect(() => {
         const fetchMovieDetails = async () => {
             setLoading(true);
             setError(null);
             try {
-                const response = await fetch(`https://api.themoviedb.org/3/movie/${id}?api_key=${apiKey}`);
-                if (!response.ok) {
-                    throw new Error('Movie not found');
-                }
-                const data = await response.json();
-                setMovie(data);
-                document.title = `${data.title} | LaxMovies`;
+                const [movieData, creditsData] = await Promise.all([
+                    fetchTMDB(`/movie/${id}`),
+                    fetchTMDB(`/movie/${id}/credits`)
+                ]);
+                
+                setMovie(movieData);
+                document.title = `${movieData.title} | LaxMovies`;
 
-                // Fetch cast info
-                const creditsResponse = await fetch(`https://api.themoviedb.org/3/movie/${id}/credits?api_key=${apiKey}`);
-                const creditsData = await creditsResponse.json();
                 if (creditsData && creditsData.cast) {
                     setActors(creditsData.cast.slice(0, 10));
                 }
@@ -48,14 +66,7 @@ const MovieDetails = ({ favourites = [], handleAddFavourite, handleRemoveFavouri
             setLoadingProviders(true);
             setProvidersError(null);
             try {
-                const response = await fetch(
-                    `https://api.themoviedb.org/3/movie/${id}/watch/providers?api_key=${apiKey}`
-                );
-                if (!response.ok) {
-                    throw new Error('Failed to fetch watch providers');
-                }
-                const data = await response.json();
-                // Get US providers or default to empty if not available
+                const data = await fetchTMDB(`/movie/${id}/watch/providers`);
                 setWatchProviders(data.results?.US || null);
             } catch (error) {
                 setProvidersError(error.message);
@@ -71,7 +82,7 @@ const MovieDetails = ({ favourites = [], handleAddFavourite, handleRemoveFavouri
         return () => {
             document.title = 'LaxMovies | Browse Movies';
         };
-    }, [id, apiKey]);
+    }, [id]);
 
     const handleFavoriteClick = async () => {
         if (!user) {

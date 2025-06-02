@@ -13,14 +13,41 @@ import logo from './assets/logo.svg';
 import { useAuth } from './contexts/AuthContext';
 import { db } from './firebase';
 import { doc, setDoc, deleteDoc, collection, getDocs, query, where } from 'firebase/firestore';
+import { validateEnvVariables } from './utils/envValidator';
 
-const API_KEY = process.env.REACT_APP_TMDB_API_KEY;
-const TMDB_API_BASE = 'https://api.themoviedb.org/3';
+// Validate environment variables in development
+if (process.env.NODE_ENV === 'development') {
+    validateEnvVariables();
+}
 
-// Add debug logging
-console.log('Environment:', process.env.NODE_ENV);
-console.log('API Key exists:', !!process.env.REACT_APP_TMDB_API_KEY);
-console.log('Firebase config exists:', !!process.env.REACT_APP_FIREBASE_API_KEY);
+// TMDB API Configuration
+const TMDB_CONFIG = {
+    baseUrl: 'https://api.themoviedb.org/3',
+    apiKey: process.env.REACT_APP_TMDB_API_KEY,
+    imageBase: 'https://image.tmdb.org/t/p'
+};
+
+// Validate API configuration
+if (!TMDB_CONFIG.apiKey) {
+    console.error("TMDB API Key is missing!");
+} else {
+    console.log("TMDB API Key is configured");
+}
+
+// API request helper
+const fetchTMDB = async (endpoint, params = {}) => {
+    const url = new URL(`${TMDB_CONFIG.baseUrl}${endpoint}`);
+    url.searchParams.append('api_key', TMDB_CONFIG.apiKey);
+    Object.entries(params).forEach(([key, value]) => {
+        url.searchParams.append(key, value);
+    });
+
+    const response = await fetch(url);
+    if (!response.ok) {
+        throw new Error(`TMDB API error: ${response.status}`);
+    }
+    return response.json();
+};
 
 const App = () => {
     const [movies, setMovies] = useState([]);
@@ -40,24 +67,10 @@ const App = () => {
         const fetchTrendingMovies = async () => {
             try {
                 setIsLoading(true);
-                // Log the API URL being called (without the key)
-                console.log('Fetching from:', `${TMDB_API_BASE}/trending/movie/week`);
-                
-                // Fetch first two pages to ensure we have enough movies
-                const [page1Response, page2Response] = await Promise.all([
-                    fetch(`${TMDB_API_BASE}/trending/movie/week?api_key=${API_KEY}&page=1`),
-                    fetch(`${TMDB_API_BASE}/trending/movie/week?api_key=${API_KEY}&page=2`)
+                const [page1Data, page2Data] = await Promise.all([
+                    fetchTMDB('/trending/movie/week', { page: '1' }),
+                    fetchTMDB('/trending/movie/week', { page: '2' })
                 ]);
-                
-                if (!page1Response.ok) {
-                    throw new Error(`HTTP error! status: ${page1Response.status}`);
-                }
-                if (!page2Response.ok) {
-                    throw new Error(`HTTP error! status: ${page2Response.status}`);
-                }
-                
-                const page1Data = await page1Response.json();
-                const page2Data = await page2Response.json();
                 
                 if (page1Data.results && page2Data.results) {
                     setMovies([...page1Data.results, ...page2Data.results]);
@@ -66,7 +79,7 @@ const App = () => {
                 }
             } catch (error) {
                 console.error('Error fetching trending movies:', error.message);
-                setMovies([]); // Set empty array on error
+                setMovies([]);
             } finally {
                 setIsLoading(false);
             }
@@ -79,14 +92,10 @@ const App = () => {
     useEffect(() => {
         const searchMovies = async () => {
             if (!searchTerm.trim()) {
-                // If search is cleared, fetch trending movies again from both pages
-                const [page1Response, page2Response] = await Promise.all([
-                    fetch(`${TMDB_API_BASE}/trending/movie/week?api_key=${API_KEY}&page=1`),
-                    fetch(`${TMDB_API_BASE}/trending/movie/week?api_key=${API_KEY}&page=2`)
+                const [page1Data, page2Data] = await Promise.all([
+                    fetchTMDB('/trending/movie/week', { page: '1' }),
+                    fetchTMDB('/trending/movie/week', { page: '2' })
                 ]);
-                
-                const page1Data = await page1Response.json();
-                const page2Data = await page2Response.json();
                 
                 if (page1Data.results && page2Data.results) {
                     setMovies([...page1Data.results, ...page2Data.results]);
@@ -96,10 +105,10 @@ const App = () => {
 
             try {
                 setIsLoading(true);
-                const response = await fetch(
-                    `${TMDB_API_BASE}/search/movie?api_key=${API_KEY}&query=${encodeURIComponent(searchTerm.trim())}&include_adult=false`
-                );
-                const data = await response.json();
+                const data = await fetchTMDB('/search/movie', {
+                    query: searchTerm.trim(),
+                    include_adult: 'false'
+                });
                 if (data.results) {
                     setMovies(data.results);
                 }
@@ -112,10 +121,26 @@ const App = () => {
 
         const timeoutId = setTimeout(() => {
             searchMovies();
-        }, 500); // Debounce for 500ms
+        }, 500);
 
         return () => clearTimeout(timeoutId);
     }, [searchTerm]);
+
+    // Fetch genres
+    useEffect(() => {
+        const fetchGenres = async () => {
+            try {
+                const data = await fetchTMDB('/genre/movie/list');
+                if (data.genres) {
+                    setGenres(data.genres);
+                }
+            } catch (error) {
+                console.error('Error fetching genres:', error);
+            }
+        };
+
+        fetchGenres();
+    }, []);
 
     // Memoize callbacks
     const handleSearchTermChange = useCallback((value) => {
@@ -130,24 +155,6 @@ const App = () => {
             console.error('Error signing out:', error);
         }
     }, [logout]);
-
-    useEffect(() => {
-        const fetchGenres = async () => {
-            try {
-                const response = await fetch(
-                    `https://api.themoviedb.org/3/genre/movie/list?api_key=${API_KEY}`
-                );
-                const data = await response.json();
-                if (data.genres) {
-                    setGenres(data.genres);
-                }
-            } catch (error) {
-                console.error('Error fetching genres:', error);
-            }
-        };
-
-        fetchGenres();
-    }, []);
 
     useEffect(() => {
         const fetchFavorites = async () => {
@@ -172,6 +179,17 @@ const App = () => {
 
         fetchFavorites();
     }, [currentUser]);
+
+    useEffect(() => {
+        // Validate API key on mount
+        if (!TMDB_CONFIG.apiKey) {
+            console.error('TMDB API key is missing');
+        } else if (TMDB_CONFIG.apiKey.length !== 32) {
+            console.error('TMDB API key has incorrect length');
+        } else {
+            console.log('TMDB API connection successful');
+        }
+    }, []);
 
     // Filter and sort movies
     const filteredMovies = useMemo(() => {
