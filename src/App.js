@@ -17,6 +17,11 @@ import { doc, setDoc, deleteDoc, collection, getDocs, query, where } from 'fireb
 const API_KEY = process.env.REACT_APP_TMDB_API_KEY;
 const TMDB_API_BASE = 'https://api.themoviedb.org/3';
 
+// Add debug logging
+console.log('Environment:', process.env.NODE_ENV);
+console.log('API Key exists:', !!process.env.REACT_APP_TMDB_API_KEY);
+console.log('Firebase config exists:', !!process.env.REACT_APP_FIREBASE_API_KEY);
+
 const App = () => {
     const [movies, setMovies] = useState([]);
     const [favourites, setFavourites] = useState([]);
@@ -35,21 +40,33 @@ const App = () => {
         const fetchTrendingMovies = async () => {
             try {
                 setIsLoading(true);
+                // Log the API URL being called (without the key)
+                console.log('Fetching from:', `${TMDB_API_BASE}/trending/movie/week`);
+                
                 // Fetch first two pages to ensure we have enough movies
                 const [page1Response, page2Response] = await Promise.all([
                     fetch(`${TMDB_API_BASE}/trending/movie/week?api_key=${API_KEY}&page=1`),
                     fetch(`${TMDB_API_BASE}/trending/movie/week?api_key=${API_KEY}&page=2`)
                 ]);
                 
+                if (!page1Response.ok) {
+                    throw new Error(`HTTP error! status: ${page1Response.status}`);
+                }
+                if (!page2Response.ok) {
+                    throw new Error(`HTTP error! status: ${page2Response.status}`);
+                }
+                
                 const page1Data = await page1Response.json();
                 const page2Data = await page2Response.json();
                 
                 if (page1Data.results && page2Data.results) {
-                    // Combine results from both pages
                     setMovies([...page1Data.results, ...page2Data.results]);
+                } else {
+                    console.error('Invalid API response structure:', { page1Data, page2Data });
                 }
             } catch (error) {
-                console.error('Error fetching trending movies:', error);
+                console.error('Error fetching trending movies:', error.message);
+                setMovies([]); // Set empty array on error
             } finally {
                 setIsLoading(false);
             }

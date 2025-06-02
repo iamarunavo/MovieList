@@ -14,7 +14,7 @@ const MovieDetails = ({ favourites = [], handleAddFavourite, handleRemoveFavouri
     const [providersError, setProvidersError] = useState(null);
 
     const isFavourite = movie && favourites.some(fav => fav.id === movie.id);
-    const apiKey = 'b3c383343eb4caebcd343c251b05b668';
+    const apiKey = process.env.REACT_APP_TMDB_API_KEY;
 
     useEffect(() => {
         const fetchMovieDetails = async () => {
