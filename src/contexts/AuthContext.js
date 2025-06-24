@@ -43,6 +43,7 @@ export function AuthProvider({ children }) {
 
     async function signInWithGoogle() {
         try {
+            console.log('Starting Google Sign-in process...');
             const provider = new GoogleAuthProvider();
             const result = await signInWithPopup(auth, provider);
             
@@ -57,8 +58,14 @@ export function AuthProvider({ children }) {
                 });
             }
             
+            console.log('Google Sign-in successful');
             return result;
         } catch (error) {
+            console.error('Google Sign-in error:', {
+                code: error.code,
+                message: error.message,
+                authDomain: auth.config.authDomain
+            });
             throw error;
         }
     }

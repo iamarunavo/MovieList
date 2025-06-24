@@ -33,7 +33,7 @@ if (!TMDB_CONFIG.apiKey) {
 } else {
     console.log("TMDB API Key is configured");
 }
-
+//hello
 // API request helper
 const fetchTMDB = async (endpoint, params = {}) => {
     const url = new URL(`${TMDB_CONFIG.baseUrl}${endpoint}`);
@@ -215,7 +215,7 @@ const App = () => {
             });
     }, [movies, sortBy, filterByRating, filterByGenre, filterByYear]);
 
-    const handleAddFavorite = async (movie) => {
+    const handleAddFavorite = useCallback(async (movie) => {
         if (!currentUser || processingMovies.has(movie.id)) return;
         
         setProcessingMovies(prev => new Set([...prev, movie.id]));
@@ -237,9 +237,9 @@ const App = () => {
                 return newSet;
             });
         }
-    };
+    }, [currentUser]);
 
-    const handleRemoveFavorite = async (movie) => {
+    const handleRemoveFavorite = useCallback(async (movie) => {
         if (!currentUser || processingMovies.has(movie.id)) return;
 
         setProcessingMovies(prev => new Set([...prev, movie.id]));
@@ -257,65 +257,80 @@ const App = () => {
                 return newSet;
             });
         }
-    };
+    }, [currentUser]);
 
     return (
         <Router>
             <Routes>
+                {/* Public Routes */}
+                <Route path="/" element={
+                    <div className='container-fluid movie-app'>
+                        <Navbar 
+                            logo={logo}
+                            searchTerm={searchTerm}
+                            setSearchTerm={handleSearchTermChange}
+                            currentUser={currentUser}
+                            favourites={favourites}
+                            handleSignOut={handleSignOut}
+                        />
+                        <FilterBar
+                            sortBy={sortBy}
+                            setSortBy={setSortBy}
+                            filterByRating={filterByRating}
+                            setFilterByRating={setFilterByRating}
+                            filterByGenre={filterByGenre}
+                            setFilterByGenre={setFilterByGenre}
+                            filterByYear={filterByYear}
+                            setFilterByYear={setFilterByYear}
+                            genres={genres}
+                        />
+                        <div className='row'>
+                            {isLoading ? (
+                                <div className="loading-spinner">Loading...</div>
+                            ) : (
+                                <MovieList
+                                    movies={filteredMovies}
+                                    handleFavouritesClick={handleAddFavorite}
+                                    handleRemoveFavourite={handleRemoveFavorite}
+                                    favourites={favourites}
+                                    user={currentUser}
+                                    processingMovies={processingMovies}
+                                />
+                            )}
+                        </div>
+                    </div>
+                } />
+
+                {/* Auth Routes */}
                 <Route path="/login" element={
                     currentUser ? <Navigate to="/" /> : <Login />
                 } />
                 <Route path="/signup" element={
                     currentUser ? <Navigate to="/" /> : <SignUp />
                 } />
-                <Route path="/" element={
+
+                {/* Movie Details Route */}
+                <Route path="/movie/:id" element={
                     <>
-                        <div className='container-fluid movie-app'>
-                            <Navbar 
-                                logo={logo}
-                                searchTerm={searchTerm}
-                                setSearchTerm={handleSearchTermChange}
-                                currentUser={currentUser}
-                                favourites={favourites}
-                                handleSignOut={handleSignOut}
-                            />
-                            <FilterBar
-                                sortBy={sortBy}
-                                setSortBy={setSortBy}
-                                filterByRating={filterByRating}
-                                setFilterByRating={setFilterByRating}
-                                filterByGenre={filterByGenre}
-                                setFilterByGenre={setFilterByGenre}
-                                filterByYear={filterByYear}
-                                setFilterByYear={setFilterByYear}
-                                genres={genres}
-                            />
-                            <div className='row'>
-                                {isLoading ? (
-                                    <div className="loading-spinner">Loading...</div>
-                                ) : (
-                                    <MovieList
-                                        movies={filteredMovies}
-                                        handleFavouritesClick={handleAddFavorite}
-                                        handleRemoveFavourite={handleRemoveFavorite}
-                                        favourites={favourites}
-                                        user={currentUser}
-                                        processingMovies={processingMovies}
-                                    />
-                                )}
-                            </div>
-                        </div>
+                        <Navbar 
+                            logo={logo}
+                            searchTerm={searchTerm}
+                            setSearchTerm={handleSearchTermChange}
+                            currentUser={currentUser}
+                            favourites={favourites}
+                            handleSignOut={handleSignOut}
+                        />
+                        <MovieDetails
+                            favourites={favourites}
+                            handleAddFavourite={handleAddFavorite}
+                            handleRemoveFavourite={handleRemoveFavorite}
+                            user={currentUser}
+                            processingMovies={processingMovies}
+                        />
                     </>
                 } />
-                <Route path="/movie/:id" element={
-                    <MovieDetails
-                        favourites={favourites}
-                        handleAddFavourite={handleAddFavorite}
-                        handleRemoveFavourite={handleRemoveFavorite}
-                        user={currentUser}
-                        processingMovies={processingMovies}
-                    />
-                } />
+
+                {/* Protected Routes */}
                 <Route path="/favorites" element={
                     <>
                         <div className='container-fluid movie-app'>

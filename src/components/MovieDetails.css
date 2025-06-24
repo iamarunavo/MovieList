@@ -192,20 +192,71 @@
 
 /* Back Button */
 .back-button {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1.5rem;
     background: rgba(255, 255, 255, 0.1);
     border: none;
-    color: white;
-    padding: 0.75rem 1.5rem;
     border-radius: 8px;
-    cursor: pointer;
+    color: white;
     font-weight: 500;
-    margin-bottom: 2rem;
+    cursor: pointer;
     transition: all 0.3s ease;
 }
 
 .back-button:hover {
     background: rgba(255, 255, 255, 0.2);
-    transform: translateX(-4px);
+    transform: translateX(-5px);
+}
+
+.favorite-button {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.75rem 1.5rem;
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 8px;
+    color: white;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.favorite-button:hover {
+    background: rgba(255, 255, 255, 0.15);
+    transform: translateY(-2px);
+}
+
+.favorite-button.is-favorite {
+    background: rgba(220, 53, 69, 0.1);
+    border-color: rgba(220, 53, 69, 0.3);
+    color: #dc3545;
+}
+
+.favorite-button.is-favorite:hover {
+    background: rgba(220, 53, 69, 0.15);
+}
+
+.favorite-button.processing {
+    opacity: 0.7;
+    cursor: not-allowed;
+}
+
+.favorite-button .spinner {
+    width: 20px;
+    height: 20px;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    border-top-color: white;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
 }
 
 /* Loading and Error States */
@@ -440,6 +491,18 @@
     .provider-category-label {
         font-size: 0.65rem;
         padding: 0.2rem 0.4rem;
+    }
+
+    .movie-header {
+        flex-direction: column;
+        gap: 1rem;
+        padding: 0 1rem;
+    }
+
+    .back-button,
+    .favorite-button {
+        width: 100%;
+        justify-content: center;
     }
 }
 

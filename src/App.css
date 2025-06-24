@@ -423,15 +423,31 @@ body {
 .logo-container {
 	display: flex;
 	align-items: center;
+	cursor: pointer;
+	z-index: 10;
+	position: relative;
+	text-decoration: none;
+}
+
+.logo-container:hover {
+	opacity: 0.9;
 }
 
 .logo-image {
 	height: 40px;
 	width: auto;
+	display: block;
 }
 
 .brand-title {
 	text-decoration: none;
+	cursor: pointer;
+	z-index: 10;
+	position: relative;
+}
+
+.brand-title:hover {
+	opacity: 0.9;
 }
 
 .logo-text {

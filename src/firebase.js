@@ -14,6 +14,10 @@ const firebaseConfig = {
     measurementId: process.env.REACT_APP_FIREBASE_MEASUREMENT_ID
 };
 
+// Log Firebase configuration for debugging
+console.log('Firebase Auth Domain:', firebaseConfig.authDomain);
+console.log('Environment:', process.env.NODE_ENV);
+
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
 export const auth = getAuth(app);

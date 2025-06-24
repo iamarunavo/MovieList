@@ -191,12 +191,32 @@ const MovieDetails = ({ favourites = [], handleAddFavourite, handleRemoveFavouri
 
     return (
         <div className="movie-details-container">
-            <button 
-                onClick={() => navigate('/')} 
-                className="back-button"
-            >
-                ← Back to Movies
-            </button>
+            <div className="movie-header">
+                <button 
+                    onClick={() => navigate('/')} 
+                    className="back-button"
+                >
+                    ← Back to Movies
+                </button>
+                {user && (
+                    <button
+                        onClick={handleFavoriteClick}
+                        className={`favorite-button ${isFavourite ? 'is-favorite' : ''} ${processingMovies.has(movie?.id) ? 'processing' : ''}`}
+                        disabled={processingMovies.has(movie?.id)}
+                    >
+                        {processingMovies.has(movie?.id) ? (
+                            <div className="spinner" aria-hidden="true" />
+                        ) : (
+                            <>
+                                <svg width="20" height="20" viewBox="0 0 16 16" fill={isFavourite ? "#dc3545" : "none"} stroke="currentColor">
+                                    <path d="M8 1.314C12.438-3.248 23.534 4.735 8 15-7.534 4.736 3.562-3.248 8 1.314z"/>
+                                </svg>
+                                {isFavourite ? 'Remove from Favorites' : 'Add to Favorites'}
+                            </>
+                        )}
+                    </button>
+                )}
+            </div>
             <div className="movie-main-details">
                 <div className="poster-container">
                     <img
@@ -217,34 +237,6 @@ const MovieDetails = ({ favourites = [], handleAddFavourite, handleRemoveFavouri
                             <span className="star">★</span> {movie.vote_average.toFixed(1)}/10
                         </div>
                         <div className="votes">({movie.vote_count.toLocaleString()} votes)</div>
-                    </div>
-                    <div className="favorites-buttons">
-                        {user ? (
-                            <button
-                                className={`btn-favorite ${isFavourite ? 'remove' : 'add'}`}
-                                onClick={handleFavoriteClick}
-                                disabled={processingMovies.has(movie?.id)}
-                                aria-label={isFavourite ? 'Remove from favorites' : 'Add to favorites'}
-                            >
-                                {processingMovies.has(movie?.id) ? (
-                                    <>
-                                        <div className="spinner" aria-hidden="true" />
-                                        <span>{isFavourite ? 'Removing...' : 'Adding...'}</span>
-                                    </>
-                                ) : (
-                                    <>
-                                        <svg width="16" height="16" viewBox="0 0 16 16" fill={isFavourite ? "currentColor" : "none"} stroke="currentColor" aria-hidden="true">
-                                            <path d="M8 1.314C12.438-3.248 23.534 4.735 8 15-7.534 4.736 3.562-3.248 8 1.314z"/>
-                                        </svg>
-                                        <span>{isFavourite ? 'Remove from Favorites' : 'Add to Favorites'}</span>
-                                    </>
-                                )}
-                            </button>
-                        ) : (
-                            <div className="login-prompt">
-                                Sign in to manage favorites
-                            </div>
-                        )}
                     </div>
                 </div>
             </div>
