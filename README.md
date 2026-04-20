@@ -1,22 +1,23 @@
-# LaxMovies - React Movie Browser
+# LaxMovies
 
-A modern React application for browsing movies, managing favorites, and discovering new films to watch. Live demo: [https://laxmovies.netlify.app/](https://laxmovies.netlify.app/)
+## Overview
+LaxMovies is a cinematic movie discovery web app that lets users browse trending films, search by title, and save favorites to a personal list. Built with a PlayStation-inspired dark aesthetic, it delivers a polished experience powered by real-time TMDB data and Firebase authentication.
+
+---
 
 ## Features
+- Search movies with live results and infinite scroll
+- View movie details — overview, ratings, top cast, and where to watch
+- Save and manage favorite movies (requires sign-in)
+- Filter and sort by genre, year, and rating
+- Email/password and Google sign-in via Firebase Auth
+- Fully responsive dark-themed UI
 
-- 🎬 Browse trending movies with dynamic updates
-- 🔍 Search functionality with real-time results
-- 🎯 Advanced filtering by rating, genre, and year
-- 👤 User authentication (Email/Password and Google Sign-in)
-- ❤️ Personal favorites management
-- 📱 Responsive design for all devices
-- 🎫 Detailed movie information with cast and streaming options
+---
 
-## Technologies Used
-
-- React 18
-- Firebase 10.14.1 (Authentication & Firestore)
-- React Router 6.22.0
-- Bootstrap 5.3.2
-- TMDB API for movie data
-- Netlify for deployment
+## Tech Stack
+- **Frontend:** Next.js 14 (App Router) + TypeScript
+- **Styling:** Tailwind CSS with custom dark theme
+- **Auth & Database:** Firebase Auth + Firestore
+- **API:** TMDB API
+- **Deployment:** Netlify
