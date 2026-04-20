@@ -12,13 +12,17 @@ const firebaseConfig = {
   measurementId:     process.env.NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID,
 };
 
-const app = getApps().length ? getApp() : initializeApp(firebaseConfig);
+const isBrowser = typeof window !== 'undefined';
 
-export const auth = getAuth(app);
-export const db = getFirestore(app);
+const app = isBrowser
+  ? (getApps().length ? getApp() : initializeApp(firebaseConfig))
+  : (getApps().length ? getApp() : null!);
+
+export const auth = isBrowser ? getAuth(app) : null as any;
+export const db   = isBrowser ? getFirestore(app) : null as any;
 
 export const getAnalyticsInstance = async () => {
-  if (typeof window === 'undefined') return null;
+  if (!isBrowser) return null;
   const { getAnalytics } = await import('firebase/analytics');
   return getAnalytics(app);
 };
