@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import './MovieDetails.css';
-
+//demo comment
 const MovieDetails = ({ favourites = [], handleAddFavourite, handleRemoveFavourite, user, processingMovies }) => {
     const { id } = useParams();
     const navigate = useNavigate();
