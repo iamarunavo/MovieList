@@ -8,9 +8,9 @@ export const revalidate = 3600;
 
 export default async function HomePage() {
   const [trendingDay, trendingWeek, topRated] = await Promise.all([
-    getTrending('day'),
-    getTrending('week'),
-    getTopRated(),
+    getTrending('day').catch(() => ({ results: [] })),
+    getTrending('week').catch(() => ({ results: [] })),
+    getTopRated().catch(() => ({ results: [] })),
   ]);
 
   return (
